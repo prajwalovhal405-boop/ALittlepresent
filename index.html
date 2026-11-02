@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Happy Birthday Angel 🎉</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Caveat:wght@600&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#5a1e3d;--rose:#ff5d8f;--deep:#d93a73;--gold:#f5a623;--card:#fff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;overflow:hidden}
+body{background:linear-gradient(160deg,#ffe3ee,#fff1f6 55%,#ffd9e8);color:var(--ink);font-family:Nunito,system-ui,sans-serif}
+canvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:50}
+.float{position:fixed;bottom:-60px;font-size:30px;opacity:.55;pointer-events:none;animation:rise var(--t) linear infinite;animation-delay:var(--d)}
+@keyframes rise{to{transform:translateY(-115vh) translateX(var(--x)) rotate(25deg)}}
+main{height:100%;display:grid;place-items:center;padding:30px 20px 90px;position:relative;z-index:2}
+.page{display:none;max-width:540px;width:100%;text-align:center}
+.page.on{display:block}
+.big{font-size:84px;line-height:1;display:inline-block;animation:bounce .8s cubic-bezier(.3,1.6,.5,1) both,wob 3s ease-in-out .8s infinite}
+@keyframes bounce{from{transform:scale(0) rotate(-40deg)}}
+@keyframes wob{50%{transform:rotate(8deg) scale(1.08)}}
+.page.on>*:not(.big){animation:up .6s ease both}
+.page.on>:nth-child(3){animation-delay:.15s}.page.on>:nth-child(4){animation-delay:.3s}.page.on>:nth-child(5){animation-delay:.45s}.page.on>:nth-child(6){animation-delay:.6s}
+@keyframes up{from{opacity:0;transform:translateY(24px)}}
+h1,h2{font-family:Fraunces,Georgia,serif;line-height:1.15;margin:12px 0}
+h1{font-size:clamp(40px,11vw,64px);color:var(--deep)}
+h2{font-size:clamp(26px,7vw,36px)}
+.sub{font-family:Caveat,cursive;font-size:30px;color:var(--deep);margin-top:6px}
+.memory{background:var(--card);border-radius:22px;padding:20px 22px;font-size:18px;line-height:1.6;box-shadow:0 10px 30px rgba(217,58,115,.18);margin-top:14px}
+.wish{font-family:Caveat,cursive;font-size:30px;color:var(--deep);margin-top:20px;line-height:1.2}
+.love{font-size:19px;line-height:1.7;margin:10px 0}
+button{font:700 17px Nunito,sans-serif;border:0;border-radius:99px;padding:14px 28px;cursor:pointer;background:var(--rose);color:#fff;box-shadow:0 5px 0 #b8325f;transition:transform .15s}
+button:hover{transform:translateY(-2px) scale(1.04)}
+button:active{transform:translateY(4px);box-shadow:0 1px 0 #b8325f}
+button:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.alt{background:var(--gold);box-shadow:0 5px 0 #b87a12}
+.pulse{animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.07)}}
+.nav{position:fixed;bottom:calc(16px + env(safe-area-inset-bottom,0px));left:0;right:0;display:flex;align-items:center;justify-content:center;gap:14px;z-index:5}
+.nav button{padding:10px 20px;font-size:15px}
+.nav button:disabled{opacity:.3;pointer-events:none}
+.dots{display:flex;gap:7px}
+.dots b{width:9px;height:9px;border-radius:50%;background:#f3b3cb;transition:.3s}
+.dots b.on{background:var(--deep);transform:scale(1.5)}
+.row{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:26px;position:relative;min-height:60px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<canvas id="cv"></canvas>
+<main id="stage"></main>
+<div class="nav">
+  <button id="prev" aria-label="Previous page">Back</button>
+  <div class="dots" id="dots"></div>
+  <button id="next" class="alt" aria-label="Next page">Next</button>
+</div>
+
+<script>
+const NAME="Angel", FROM="Me";
+const PAGES=[
+ {e:"🌐",t:"How we met",m:"We met online. No big story, just two people who ended up talking. I never thought it would turn into this.",w:"Glad the internet did something right for once."},
+ {e:"🎮",t:"First Roblox game",m:"Our first game together. We were probably awful at it, but I remember not wanting it to end.",w:"Hope this year is all wins."},
+ {e:"🏆",t:"Roblox nights",m:"All those times we said one more round and then played five more. Best way I’ve ever wasted time.",w:"Hope your year has zero lag and good people."},
+ {e:"📞",t:"Then the calls",m:"Then we started calling. Somewhere in there, talking to you became the part of my day I looked forward to most.",w:"Hope you get as many good days as you give."},
+ {e:"😊",t:"Your laugh",m:"Your laugh is honestly one of my favourite sounds. I can tell when you’re smiling, even over the phone.",w:"Hope you laugh a lot this year."},
+ {e:"🌟",t:"You",m:"You’re kind, funny and easy to talk to. The distance hasn’t changed that, and I’m really glad I know you.",w:"You deserve a really good year, Angel."}
+];
+const $=s=>document.querySelector(s);
+const stage=$("#stage"),dots=$("#dots");
+const h=[];
+h.push(`<section class="page"><div class="big">🎉</div><h1>Happy Birthday, ${NAME}!</h1><p class="sub">I made you something.</p><div class="row"><button id="pop" class="alt pulse">Pop the poppers 🎊</button></div></section>`);
+PAGES.forEach(p=>h.push(`<section class="page"><div class="big">${p.e}</div><h2>${p.t}</h2><p class="memory">${p.m}</p><p class="wish">${p.w}</p></section>`));
+h.push(`<section class="page"><div class="big">💌</div><h2>One last thing…</h2><p class="love">${NAME}, I’ll just say it. Somewhere between the games and the calls, I fell for you.</p><p class="love"><b>I love you.</b> I didn’t want your birthday to go by without telling you.</p><h1 style="font-size:clamp(30px,8vw,48px)">Happy Birthday, Angel 🎂</h1><div class="row" id="ans"><button id="yes" class="pulse">Be mine? 💖</button><button id="no" class="alt">Let me think…</button></div><p class="sub">– ${FROM}</p></section>`);
+stage.innerHTML=h.join("");
+const pages=[...stage.children],N=pages.length;
+dots.innerHTML=pages.map(()=>"<b></b>").join("");
+// floating balloons & hearts
+["🎈","💖","🎈","✨","💗","🎈","🌸","💖","🎈","✨"].forEach((s,i)=>{const d=document.createElement("div");d.className="float";d.textContent=s;d.style.cssText=`left:${i*10+3}%;--t:${9+i%4*3}s;--d:${-i*1.7}s;--x:${i%2?40:-40}px`;document.body.appendChild(d)});
+// confetti
+const cv=$("#cv"),ctx=cv.getContext("2d");let ps=[],raf=0;
+function fit(){cv.width=innerWidth*devicePixelRatio;cv.height=innerHeight*devicePixelRatio;ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0)}
+fit();addEventListener("resize",fit);
+const C=["#ff5d8f","#f5a623","#2bc4c2","#a78bfa","#ff8a3d","#4f8cff"];
+const mk=(x,y,vx,vy)=>({x,y,vx,vy,r:Math.random()*6,vr:(Math.random()-.5)*.4,s:6+Math.random()*7,c:C[Math.random()*C.length|0],h:Math.random()<.2,l:1});
+function burst(x,y,n,a,sp,pw){for(let i=0;i<n;i++){const g=a+(Math.random()-.5)*sp,v=(.5+Math.random())*pw;ps.push(mk(x,y,Math.cos(g)*v,Math.sin(g)*v))}go()}
+function poppers(){const w=innerWidth,H=innerHeight;burst(0,H,90,-Math.PI/3,.8,18);burst(w,H,90,-2*Math.PI/3,.8,18);burst(w/2,H*.4,60,-Math.PI/2,6.28,12)}
+function rain(ms){const t=Date.now();(function f(){for(let i=0;i<4;i++)ps.push(mk(Math.random()*innerWidth,-10,(Math.random()-.5)*2,2+Math.random()*3));go();if(Date.now()-t<ms)requestAnimationFrame(f)})()}
+function go(){if(!raf)raf=requestAnimationFrame(tick)}
+function tick(){ctx.clearRect(0,0,innerWidth,innerHeight);ps=ps.filter(p=>p.y<innerHeight+20&&p.l>0);
+for(const p of ps){p.vy+=.35;p.vx*=.985;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;if(p.y>innerHeight*.9)p.l-=.03;ctx.save();ctx.globalAlpha=Math.max(p.l,0);ctx.translate(p.x,p.y);ctx.rotate(p.r);ctx.fillStyle=p.c;
+if(p.h){ctx.font=p.s*2+"px serif";ctx.fillText("❤",0,0)}else ctx.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);ctx.restore()}
+raf=ps.length?requestAnimationFrame(tick):0}
+// navigation
+let cur=0;
+function show(i){cur=Math.max(0,Math.min(N-1,i));pages.forEach((p,k)=>p.classList.toggle("on",k===cur));[...dots.children].forEach((d,k)=>d.classList.toggle("on",k===cur));
+$("#prev").disabled=cur===0;$("#next").style.visibility=cur===N-1?"hidden":"visible";
+if(cur===N-1){poppers();setTimeout(()=>rain(4000),400)}else if(cur>0)poppers()}
+$("#next").onclick=()=>show(cur+1);$("#prev").onclick=()=>show(cur-1);
+addEventListener("keydown",e=>{if(e.key==="ArrowRight")show(cur+1);if(e.key==="ArrowLeft")show(cur-1)});
+let sx=0;addEventListener("touchstart",e=>sx=e.touches[0].clientX,{passive:true});
+addEventListener("touchend",e=>{const d=e.changedTouches[0].clientX-sx;if(Math.abs(d)>60)show(cur+(d<0?1:-1))});
+$("#pop").onclick=()=>{poppers();setTimeout(poppers,350)};
+$("#yes").onclick=()=>{$("#ans").innerHTML='<h2 style="width:100%">Yay 🥹💖</h2>';poppers();rain(6000)};
+const no=$("#no");function dodge(){no.style.position="absolute";no.style.left=Math.random()*70+"%";no.style.top=Math.random()*60-10+"px"}
+no.onmouseenter=dodge;no.onclick=dodge;no.ontouchstart=e=>{e.preventDefault();dodge()};
+show(0);setTimeout(poppers,500);
+</script>
+</body>
+</html>
